@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Optimisation 2 post read</title>
+<style>
+:root{
+  --orange:#F7941D;
+  --orange-dark:#D9700B;
+  --orange-light:#FFE6C9;
+  --gray-900:#1C1C1E;
+  --gray-800:#2B2B2D;
+  --gray-700:#3F3F42;
+  --gray-500:#6B6B6E;
+  --gray-300:#C9C9CC;
+  --gray-200:#E4E4E6;
+  --gray-100:#F2F2F3;
+  --gray-50:#FAFAFA;
+  --white:#FFFFFF;
+  --radius:14px;
+  --shadow:0 4px 20px rgba(0,0,0,0.08);
+  --shadow-lg:0 10px 40px rgba(0,0,0,0.12);
+  --maxw:860px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--gray-900);
+  background:var(--gray-50);
+  line-height:1.65;
+}
+h1,h2,h3,h4{font-family:inherit; font-weight:800; letter-spacing:-0.01em; color:var(--gray-900);}
+a{color:var(--orange-dark);}
+img{max-width:100%;}
+.hero{
+  position:relative;
+  background:linear-gradient(160deg,var(--gray-900) 0%,var(--gray-800) 60%,#171718 100%);
+  color:var(--white);
+  padding:88px 24px 150px;
+  overflow:hidden;
+  text-align:center;
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  top:-120px; right:-120px;
+  width:420px; height:420px;
+  background:radial-gradient(circle,rgba(247,148,29,0.55),transparent 70%);
+  filter:blur(10px);
+}
+.hero::after{
+  content:"";
+  position:absolute;
+  bottom:-160px; left:-100px;
+  width:380px; height:380px;
+  background:radial-gradient(circle,rgba(247,148,29,0.25),transparent 70%);
+}
+.eyebrow{
+  display:inline-block;
+  font-size:12.5px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--orange);
+  background:rgba(247,148,29,0.12);
+  border:1px solid rgba(247,148,29,0.4);
+  padding:6px 14px; border-radius:999px;
+  margin-bottom:22px;
+  position:relative; z-index:2;
+}
+.hero h1{
+  font-size:clamp(32px,5vw,52px);
+  margin:0 0 16px;
+  color:var(--white);
+  position:relative; z-index:2;
+}
+.hero p.sub{
+  max-width:620px; margin:0 auto; font-size:18px; color:var(--gray-300);
+  position:relative; z-index:2;
+}
+.toc{
+  max-width:var(--maxw);
+  margin:-96px auto 56px;
+  background:var(--white);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-lg);
+  padding:28px 32px;
+  position:relative; z-index:3;
+  border:1px solid var(--gray-200);
+}
+.toc h3{
+  font-size:13px; text-transform:uppercase; letter-spacing:0.1em; color:var(--orange-dark);
+  margin:0 0 14px;
+}
+.toc ol{
+  margin:0; padding:0; list-style:none;
+  display:grid; grid-template-columns:1fr 1fr; gap:8px 28px;
+}
+.toc li a{
+  display:block; text-decoration:none; color:var(--gray-700); font-size:15px; font-weight:600;
+  padding:6px 0; border-bottom:1px dashed var(--gray-200);
+}
+.toc li a:hover{color:var(--orange-dark);}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px;}
+section.block{padding:52px 0; border-bottom:1px solid var(--gray-200);}
+section.block:last-of-type{border-bottom:none;}
+section.block h2{
+  font-size:28px; margin:0 0 22px;
+  display:inline-block;
+  border-bottom:4px solid var(--orange);
+  padding-bottom:8px;
+}
+section.block h3{font-size:19px; margin:30px 0 12px; color:var(--gray-800);}
+section.block p{font-size:16.5px; color:var(--gray-700); margin:0 0 16px;}
+.card{
+  background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius);
+  padding:22px 24px; box-shadow:var(--shadow); margin:20px 0;
+}
+.callout{
+  border-left:4px solid var(--orange); background:var(--orange-light);
+  padding:16px 20px; border-radius:0 10px 10px 0; margin:20px 0; font-size:15.5px; color:var(--gray-800);
+}
+.insight{
+  background:var(--gray-900); color:var(--white); border-radius:var(--radius);
+  padding:22px 26px; margin:24px 0; position:relative;
+}
+.insight::before{content:"KEY INSIGHT"; display:block; font-size:11.5px; letter-spacing:0.12em; color:var(--orange); font-weight:800; margin-bottom:8px;}
+.formula-block{
+  background:var(--gray-900); color:var(--orange-light); border-radius:12px;
+  padding:20px 26px; margin:20px 0; font-size:18px; text-align:center; font-style:italic;
+  font-family:"Georgia",serif; letter-spacing:0.02em; overflow-x:auto;
+}
+table{width:100%; border-collapse:collapse; margin:18px 0; font-size:15px;}
+th,td{padding:10px 14px; border:1px solid var(--gray-200); text-align:left;}
+th{background:var(--gray-100); font-weight:700; color:var(--gray-800);}
+tr:nth-child(even) td{background:var(--gray-50);}
+/* accordion */
+.accordion{margin:20px 0;}
+.acc-item{border:1px solid var(--gray-200); border-radius:10px; margin-bottom:10px; overflow:hidden; background:var(--white);}
+.acc-head{
+  display:flex; justify-content:space-between; align-items:center; cursor:pointer;
+  padding:16px 20px; font-weight:700; color:var(--gray-800); background:var(--white);
+}
+.acc-head:hover{background:var(--gray-50);}
+.acc-head .plus{color:var(--orange-dark); font-size:20px; transition:transform .25s;}
+.acc-item.open .plus{transform:rotate(45deg);}
+.acc-body{max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 20px;}
+.acc-body-inner{padding:4px 0 18px; font-size:15.5px; color:var(--gray-700);}
+.acc-head:focus-visible, .tab-btn:focus-visible, button:focus-visible, input:focus-visible{outline:3px solid var(--orange-dark); outline-offset:2px;}
+/* tabs */
+.tabs{margin:20px 0;}
+.tab-bar{display:flex; gap:6px; flex-wrap:wrap; border-bottom:2px solid var(--gray-200); margin-bottom:18px;}
+.tab-btn{
+  background:none; border:none; padding:10px 16px; font-size:14.5px; font-weight:700; color:var(--gray-500);
+  cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px;
+}
+.tab-btn.active{color:var(--orange-dark); border-bottom-color:var(--orange);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+/* interactive widgets */
+.sim-box{background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); margin:22px 0;}
+.sim-controls{display:flex; flex-wrap:wrap; gap:22px; align-items:center; margin-bottom:16px;}
+.sim-controls label{font-size:14px; font-weight:700; color:var(--gray-800); display:flex; flex-direction:column; gap:6px;}
+input[type=range]{width:220px; accent-color:var(--orange);}
+select, input[type=number]{padding:8px 10px; border-radius:8px; border:1px solid var(--gray-300); font-size:14px;}
+.pill{display:inline-block; background:var(--orange); color:var(--white); font-weight:800; padding:4px 12px; border-radius:999px; font-size:13.5px;}
+.pill.alt{background:var(--gray-800);}
+.sim-result{font-size:15.5px; color:var(--gray-800); background:var(--gray-50); border-radius:10px; padding:14px 18px;}
+.verdict-good{color:#1f8a4c; font-weight:800;}
+.verdict-bad{color:#C4350B; font-weight:800;}
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+@media (max-width:720px){.two-col{grid-template-columns:1fr;} .toc ol{grid-template-columns:1fr;}}
+.svg-wrap{width:100%; max-width:520px; margin:0 auto; display:block;}
+.caption{font-size:13px; color:var(--gray-500); text-align:center; margin-top:8px;}
+.grid-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin:20px 0;}
+.mini-card{background:var(--white); border:1px solid var(--gray-200); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow);}
+.mini-card h4{margin:0 0 8px; font-size:15px; color:var(--orange-dark);}
+.mini-card p{font-size:14px; margin:0; color:var(--gray-700);}
+.btn{
+  background:var(--orange); color:var(--white); border:none; padding:9px 18px; border-radius:8px;
+  font-weight:700; font-size:14px; cursor:pointer;
+}
+.btn:hover{background:var(--orange-dark);}
+.rules-table td:first-child{font-weight:700; color:var(--orange-dark); white-space:nowrap;}
+footer{
+  background:var(--gray-900); color:var(--gray-300); text-align:center; padding:40px 24px; font-size:14px;
+}
+footer .title{color:var(--white); font-weight:800; font-size:16px; margin-bottom:6px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="eyebrow">Optimisation Series · Part 2</span>
+  <h1>Optimisation 2 post read</h1>
+  <p class="sub">From secants to tangents, the rules that unlock any derivative, and how a single derivative test tells minima from maxima from saddle points.</p>
+</div>
+
+<nav class="toc">
+  <h3>On this page</h3>
+  <ol>
+    <li><a href="#geo">The geometric picture of differentiation</a></li>
+    <li><a href="#find">Finding a derivative</a></li>
+    <li><a href="#diff">Checking differentiability</a></li>
+    <li><a href="#common">Commonly used derivatives</a></li>
+    <li><a href="#rules">Rules of differentiation</a></li>
+    <li><a href="#critical">Derivatives for optimisation</a></li>
+  </ol>
+</nav>
+
+<div class="wrap">
+
+<section class="block" id="geo">
+  <h2>The geometric picture of differentiation</h2>
+  <p>Take two points on a curve, <strong>A</strong> at <code>(x₁, f(x₁))</code> and <strong>B</strong> at <code>(x₂, f(x₂))</code>. A line through both points is called a <strong>secant</strong>, and its slope is the familiar rise-over-run:</p>
+  <div class="formula-block">slope = ( f(x₂) − f(x₁) ) / ( x₂ − x₁ )</div>
+  <p>Now fix point A and slide point B closer and closer to it. The gap between the point and the new one shrinks to a tiny amount we call <strong>Δx</strong>, so the second point becomes <code>(x + Δx, f(x + Δx))</code>. A line that touches the curve at only one point — the point the secant collapses onto — is called a <strong>tangent</strong>.</p>
+  <div class="insight">The derivative of <code>f(x)</code> at <code>x = x₁</code> is defined as the slope of the tangent line at that point — the limit of the secant's slope as Δx shrinks to 0.</div>
+  <div class="formula-block">f′(x₁) = lim<sub>Δx→0</sub> [ f(x₁ + Δx) − f(x₁) ] / Δx</div>
+  <p>This is called the <strong>ab-initio method</strong> — deriving a derivative straight from its definition.</p>
+
+  <div class="sim-box">
+    <h3 style="margin-top:0;">Secant → tangent explorer</h3>
+    <p style="margin-bottom:14px; font-size:14.5px;">Drag the slider to shrink Δx and watch the secant line through <code>f(x) = x²</code> at <code>x₁ = 1</code> converge onto the tangent.</p>
+    <div class="sim-controls">
+      <label>Δx value: <span id="dxLabel" class="pill">1.50</span>
+        <input type="range" id="dxSlider" min="1" max="60" value="1" step="1">
+      </label>
+    </div>
+    <svg class="svg-wrap" id="secantSvg" viewBox="0 0 440 320" role="img" aria-label="Secant line approaching tangent line on the curve x squared"></svg>
+    <div class="sim-result" id="secantResult"></div>
+  </div>
+</section>
+
+<section class="block" id="find">
+  <h2>Finding a derivative for any function</h2>
+  <p>There are two routes: apply the ab-initio limit definition directly, or memorise the derivatives of well-known functions and combine them using a handful of rules.</p>
+
+  <h3>Worked example: f(x) = x²</h3>
+  <div class="formula-block">
+    f′(x) = lim Δx→0 [ (x+Δx)² − x² ] / Δx<br>
+    = lim Δx→0 [ (Δx)² + 2x(Δx) ] / Δx<br>
+    = lim Δx→0 ( Δx + 2x )<br>
+    = 2x
+  </div>
+  <p>Plotting <code>f'(x) = 2x</code> against the numerically-estimated slope of <code>f(x) = x²</code> at every point confirms the two match exactly.</p>
+
+  <div class="callout"><strong>Power rule.</strong> For any function of the form <code>f(x) = xⁿ</code>, bring the exponent down as a multiplier and reduce it by one: <code>d/dx[xⁿ] = n·x<sup>n−1</sup></code>. So <code>f(x) = x</code> gives <code>f'(x) = 1</code>, and <code>f(x) = −x</code> gives <code>f'(x) = −1</code>.</p></div>
+
+  <h3>The absolute-value function, f(x) = |x|</h3>
+  <p><code>|x|</code> splits into two pieces: <code>f(x) = x</code> for <code>x &gt; 0</code>, and <code>f(x) = −x</code> for <code>x &lt; 0</code>, with <code>f(0) = 0</code>. Each piece differentiates on its own (1 and −1 respectively) — the interesting question is what happens exactly at <code>x = 0</code>, covered next.</p>
+</section>
+
+<section class="block" id="diff">
+  <h2>Checking if a function is differentiable</h2>
+  <div class="card">
+    <strong>The test:</strong>
+    <ol style="margin:10px 0 0; padding-left:20px; font-size:15.5px; color:var(--gray-700);">
+      <li>Find the first derivative, f′(x).</li>
+      <li>Check whether f′(x) itself is continuous.</li>
+      <li>If f′(x) is <strong>discontinuous</strong> at a point, then f(x) is <strong>not differentiable</strong> there.</li>
+    </ol>
+  </div>
+  <p>For <code>f(x) = |x|</code>: the derivative is <code>+1</code> for <code>x &gt; 0</code> and <code>−1</code> for <code>x &lt; 0</code>, and undefined at <code>x = 0</code> — a jump discontinuity in f′(x). Geometrically, infinitely many lines could touch the sharp "V" at the origin, so no single tangent — and hence no derivative — exists there.</p>
+  <p>By contrast, <code>f(x) = x²</code> has derivative <code>f'(x) = 2x</code>, a straight, continuous line through every x — so <code>x²</code> is differentiable everywhere.</p>
+
+  <div class="sim-box">
+    <h3 style="margin-top:0;">Differentiability checker: |x| at x = 0</h3>
+    <p style="margin-bottom:14px; font-size:14.5px;">Move the point toward x = 0 from either side and watch the one-sided slope.</p>
+    <div class="sim-controls">
+      <label>Point position: <span id="absLabel" class="pill">x = −2.0</span>
+        <input type="range" id="absSlider" min="-50" max="50" value="-20" step="1">
+      </label>
+    </div>
+    <svg class="svg-wrap" id="absSvg" viewBox="0 0 440 280" role="img" aria-label="Absolute value function with moving tangent"></svg>
+    <div class="sim-result" id="absResult"></div>
+  </div>
+
+  <div class="insight">A kink (sharp corner) or a jump/break in the curve makes a function non-differentiable at that point, even if the function itself is still perfectly continuous there (as with |x|).</div>
+</section>
+
+<section class="block" id="common">
+  <h2>Commonly used derivatives</h2>
+  <p>A short reference table of standard derivatives, used repeatedly when building up more complex derivatives with the rules below.</p>
+  <table>
+    <tr><th>Function f(x)</th><th>Derivative f′(x)</th></tr>
+    <tr><td>c (constant)</td><td>0</td></tr>
+    <tr><td>x</td><td>1</td></tr>
+    <tr><td>xⁿ</td><td>n·x<sup>n−1</sup></td></tr>
+    <tr><td>sin(x)</td><td>cos(x)</td></tr>
+    <tr><td>cos(x)</td><td>−sin(x)</td></tr>
+    <tr><td>eˣ</td><td>eˣ</td></tr>
+    <tr><td>log(x)</td><td>1/x</td></tr>
+  </table>
+</section>
+
+<section class="block" id="rules">
+  <h2>Rules of differentiation</h2>
+  <p>Once the derivatives of basic functions are known, these four rules let you differentiate almost any combination of them.</p>
+
+  <div class="accordion" id="ruleAccordion">
+    <div class="acc-item">
+      <div class="acc-head" role="button" tabindex="0" aria-expanded="false">Linearity rule <span class="plus">+</span></div>
+      <div class="acc-body"><div class="acc-body-inner">
+        For <code>h(x) = g(x) + f(x)</code>, differentiate each term separately and add: <code>h'(x) = g'(x) + f'(x)</code>.<br><br>
+        <em>Example:</em> <code>f(x) = x³ + log(x)</code> → <code>f'(x) = 3x² + 1/x</code>.<br><br>
+        For a constant multiple, <code>h(x) = c·f(x)</code>, keep <code>c</code> untouched: <code>h'(x) = c·f'(x)</code>.<br>
+        <em>Example:</em> <code>f(x) = 3·sin(x)</code> → <code>f'(x) = 3·cos(x)</code>.
+      </div></div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-head" role="button" tabindex="0" aria-expanded="false">Product rule <span class="plus">+</span></div>
+      <div class="acc-body"><div class="acc-body-inner">
+        For <code>h(x) = g(x)·f(x)</code>: treat <code>g(x)</code> as constant while differentiating <code>f(x)</code>, then treat <code>f(x)</code> as constant while differentiating <code>g(x)</code>, and add the two.<br><br>
+        <code>h'(x) = f'(x)·g(x) + f(x)·g'(x)</code>
+      </div></div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-head" role="button" tabindex="0" aria-expanded="false">Quotient rule <span class="plus">+</span></div>
+      <div class="acc-body"><div class="acc-body-inner">
+        For <code>h(x) = f(x) / g(x)</code>:
+        <ol style="margin:8px 0 0; padding-left:20px;">
+          <li>Differentiate the numerator, keep the denominator as-is.</li>
+          <li>Keep the numerator as-is, differentiate the denominator.</li>
+          <li>Subtract: step 1 result minus step 2 result.</li>
+          <li>Divide the whole thing by <code>[g(x)]²</code>.</li>
+        </ol>
+      </div></div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-head" role="button" tabindex="0" aria-expanded="false">Chain rule <span class="plus">+</span></div>
+      <div class="acc-body"><div class="acc-body-inner">
+        For a function nested inside another, <code>h(x) = f(g(x))</code>:
+        <ol style="margin:8px 0 0; padding-left:20px;">
+          <li>Treat <code>g(x)</code> as a constant and differentiate the outer function <code>f</code>.</li>
+          <li>Multiply that result by the derivative of the inner function, <code>g'(x)</code>.</li>
+        </ol>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="critical">
+  <h2>Using derivatives for optimisation</h2>
+  <p>Along any curve, the sign of the slope (the derivative) tells you whether the function is rising or falling. Points where the slope <strong>changes sign</strong> — or equivalently, where the derivative equals exactly zero — are called <strong>critical points</strong>.</p>
+  <div class="grid-cards">
+    <div class="mini-card"><h4>Minima</h4><p>Slope goes negative → positive moving left to right. The curve dips and rises again.</p></div>
+    <div class="mini-card"><h4>Maxima</h4><p>Slope goes positive → negative moving left to right. The curve rises and then falls.</p></div>
+    <div class="mini-card"><h4>Global vs. local</h4><p>Among several minima, the lowest overall is the <em>global</em> minimum; the rest are <em>local</em> minima. Same logic for maxima.</p></div>
+  </div>
+
+  <h3>The second-derivative test</h3>
+  <p>Rather than manually comparing slopes just left and right of a point, take the <strong>second derivative</strong> at each critical point (where f′(x) = 0):</p>
+  <table class="rules-table">
+    <tr><td>f″(x) &gt; 0</td><td>Minima — slope is increasing through the point (curving upward)</td></tr>
+    <tr><td>f″(x) &lt; 0</td><td>Maxima — slope is decreasing through the point (curving downward)</td></tr>
+    <tr><td>f″(x) = 0</td><td>Saddle point — derivative is zero but the sign of the slope does not flip on either side</td></tr>
+  </table>
+  <div class="insight">A saddle point has a flat tangent (f′ = 0) but is neither a minimum nor a maximum: the slope has the same sign immediately to its left and right.</div>
+
+  <div class="sim-box">
+    <h3 style="margin-top:0;">Critical-point classifier</h3>
+    <p style="margin-bottom:14px; font-size:14.5px;">Pick a point along <code>f(x) = x³ − 3x</code> and see whether it's a minimum, maximum, or ordinary point, using the first- and second-derivative signs.</p>
+    <div class="sim-controls">
+      <label>x position: <span id="cpLabel" class="pill">x = 0.00</span>
+        <input type="range" id="cpSlider" min="-200" max="200" value="0" step="1">
+      </label>
+    </div>
+    <svg class="svg-wrap" id="cpSvg" viewBox="0 0 440 300" role="img" aria-label="Cubic function with classified critical points"></svg>
+    <div class="sim-result" id="cpResult"></div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <div class="title">Optimisation 2 post read</div>
+  Differentiation geometry · derivative rules · differentiability · critical points
+</footer>
+
+<script>
+// ---------- Accordion ----------
+document.querySelectorAll('#ruleAccordion .acc-head').forEach(head=>{
+  function toggle(){
+    const item = head.parentElement;
+    const body = head.nextElementSibling;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('#ruleAccordion .acc-item').forEach(i=>{
+      i.classList.remove('open');
+      i.querySelector('.acc-head').setAttribute('aria-expanded','false');
+      i.querySelector('.acc-body').style.maxHeight = null;
+    });
+    if(!isOpen){
+      item.classList.add('open');
+      head.setAttribute('aria-expanded','true');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+  }
+  head.addEventListener('click', toggle);
+  head.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+});
+
+// ---------- Secant to tangent ----------
+const dxSlider = document.getElementById('dxSlider');
+const dxLabel = document.getElementById('dxLabel');
+const secantSvg = document.getElementById('secantSvg');
+const secantResult = document.getElementById('secantResult');
+
+function fQ(x){ return x*x; }
+function sx(x){ return 220 + x*40; } // screen x
+function sy(y){ return 300 - y*22; } // screen y
+
+function drawSecant(){
+  const dxVal = parseInt(dxSlider.value)/20; // 0.05 .. 3.0
+  dxLabel.textContent = dxVal.toFixed(2);
+  const x1 = 1;
+  const x2 = x1 + dxVal;
+  const y1 = fQ(x1), y2 = fQ(x2);
+  let svg = '';
+  // curve
+  let pathD = '';
+  for(let i=0;i<=60;i++){
+    const x = -3 + i*6/60;
+    const px = sx(x), py = sy(fQ(x));
+    pathD += (i===0?'M':'L') + px.toFixed(1) + ' ' + py.toFixed(1) + ' ';
+  }
+  svg += `<path d="${pathD}" fill="none" stroke="#3F3F42" stroke-width="2.5"/>`;
+  // axes
+  svg += `<line x1="0" y1="${sy(0)}" x2="440" y2="${sy(0)}" stroke="#C9C9CC" stroke-width="1"/>`;
+  svg += `<line x1="${sx(0)}" y1="0" x2="${sx(0)}" y2="320" stroke="#C9C9CC" stroke-width="1"/>`;
+  // secant line extended
+  const slope = (y2-y1)/(x2-x1);
+  const xa = -0.5, xb = 3;
+  const ya = y1 + slope*(xa-x1), yb = y1 + slope*(xb-x1);
+  svg += `<line x1="${sx(xa)}" y1="${sy(ya)}" x2="${sx(xb)}" y2="${sy(yb)}" stroke="#F7941D" stroke-width="3" stroke-dasharray="${dxVal>0.3?'0':'0'}"/>`;
+  // points
+  svg += `<circle cx="${sx(x1)}" cy="${sy(y1)}" r="6" fill="#1C1C1E"/>`;
+  svg += `<circle cx="${sx(x2)}" cy="${sy(y2)}" r="6" fill="#D9700B"/>`;
+  svg += `<text x="${sx(x1)-10}" y="${sy(y1)-14}" font-size="13" fill="#1C1C1E" font-weight="700">A</text>`;
+  svg += `<text x="${sx(x2)+8}" y="${sy(y2)-10}" font-size="13" fill="#D9700B" font-weight="700">B</text>`;
+  secantSvg.innerHTML = svg;
+  secantResult.innerHTML = `Secant slope = (f(x₂) − f(x₁)) / (x₂ − x₁) = <strong>${slope.toFixed(3)}</strong>  — as Δx → 0 this approaches the true tangent slope at x=1, which is <strong>f'(1) = 2</strong>.`;
+}
+dxSlider.addEventListener('input', drawSecant);
+drawSecant();
+
+// ---------- |x| differentiability ----------
+const absSlider = document.getElementById('absSlider');
+const absLabel = document.getElementById('absLabel');
+const absSvg = document.getElementById('absSvg');
+const absResult = document.getElementById('absResult');
+
+function sxA(x){ return 220 + x*8; }
+function syA(y){ return 230 - y*8; }
+
+function drawAbs(){
+  const xVal = parseInt(absSlider.value)/10; // -5..5
+  absLabel.textContent = 'x = ' + xVal.toFixed(1);
+  let svg = '';
+  let pathD = '';
+  for(let i=0;i<=100;i++){
+    const x = -5 + i*10/100;
+    const px = sxA(x), py = syA(Math.abs(x));
+    pathD += (i===0?'M':'L') + px.toFixed(1) + ' ' + py.toFixed(1) + ' ';
+  }
+  svg += `<path d="${pathD}" fill="none" stroke="#3F3F42" stroke-width="2.5"/>`;
+  svg += `<line x1="0" y1="${syA(0)}" x2="440" y2="${syA(0)}" stroke="#C9C9CC" stroke-width="1"/>`;
+  svg += `<line x1="${sxA(0)}" y1="0" x2="${sxA(0)}" y2="280" stroke="#C9C9CC" stroke-width="1"/>`;
+  const slope = xVal>0 ? 1 : (xVal<0 ? -1 : NaN);
+  if(xVal!==0){
+    const x0 = xVal, y0 = Math.abs(xVal);
+    const span=1.6;
+    const x1=x0-span, x2=x0+span;
+    const y1=y0+slope*(x1-x0), y2=y0+slope*(x2-x0);
+    svg += `<line x1="${sxA(x1)}" y1="${syA(y1)}" x2="${sxA(x2)}" y2="${syA(y2)}" stroke="#F7941D" stroke-width="3"/>`;
+  } else {
+    svg += `<line x1="${sxA(-1)}" y1="${syA(1)}" x2="${sxA(1)}" y2="${syA(1)}" stroke="#C4350B" stroke-width="2.5" stroke-dasharray="4 4"/>`;
+    svg += `<line x1="${sxA(-1)}" y1="${syA(-1)}" x2="${sxA(1)}" y2="${syA(-1)}" stroke="#C4350B" stroke-width="2.5" stroke-dasharray="4 4" opacity="0"/>`;
+  }
+  svg += `<circle cx="${sxA(xVal)}" cy="${syA(Math.abs(xVal))}" r="6" fill="${xVal===0?'#C4350B':'#D9700B'}"/>`;
+  absSvg.innerHTML = svg;
+  if(xVal===0){
+    absResult.innerHTML = `At x = 0 the left-hand slope is <strong>−1</strong> and the right-hand slope is <strong>+1</strong> — they disagree, so no single tangent exists. <span class="verdict-bad">Not differentiable at x = 0.</span>`;
+  } else {
+    absResult.innerHTML = `Tangent slope here is <strong>${slope}</strong>. <span class="verdict-good">Differentiable at this point.</span>`;
+  }
+}
+absSlider.addEventListener('input', drawAbs);
+drawAbs();
+
+// ---------- Critical point classifier: x^3 - 3x ----------
+const cpSlider = document.getElementById('cpSlider');
+const cpLabel = document.getElementById('cpLabel');
+const cpSvg = document.getElementById('cpSvg');
+const cpResult = document.getElementById('cpResult');
+
+function fC(x){ return x*x*x - 3*x; }
+function fCp(x){ return 3*x*x - 3; }
+function fCpp(x){ return 6*x; }
+function sxC(x){ return 220 + x*70; }
+function syC(y){ return 170 - y*22; }
+
+function drawCp(){
+  const xVal = parseInt(cpSlider.value)/100; // -2..2
+  cpLabel.textContent = 'x = ' + xVal.toFixed(2);
+  let svg='';
+  let pathD='';
+  for(let i=0;i<=100;i++){
+    const x = -2.2 + i*4.4/100;
+    const px = sxC(x), py = syC(fC(x));
+    pathD += (i===0?'M':'L') + px.toFixed(1)+' '+py.toFixed(1)+' ';
+  }
+  svg += `<path d="${pathD}" fill="none" stroke="#3F3F42" stroke-width="2.5"/>`;
+  svg += `<line x1="0" y1="${syC(0)}" x2="440" y2="${syC(0)}" stroke="#C9C9CC" stroke-width="1"/>`;
+  svg += `<line x1="${sxC(0)}" y1="0" x2="${sxC(0)}" y2="300" stroke="#C9C9CC" stroke-width="1"/>`;
+  // mark known critical points x=-1 (max) and x=1 (min)
+  [-1,1].forEach(cx=>{
+    svg += `<circle cx="${sxC(cx)}" cy="${syC(fC(cx))}" r="4" fill="#C9C9CC"/>`;
+  });
+  const slope = fCp(xVal);
+  const span=0.6;
+  const x1=xVal-span,x2=xVal+span;
+  const y1=fC(xVal)+slope*(x1-xVal), y2=fC(xVal)+slope*(x2-xVal);
+  svg += `<line x1="${sxC(x1)}" y1="${syC(y1)}" x2="${sxC(x2)}" y2="${syC(y2)}" stroke="#F7941D" stroke-width="3"/>`;
+  svg += `<circle cx="${sxC(xVal)}" cy="${syC(fC(xVal))}" r="6" fill="#D9700B"/>`;
+  cpSvg.innerHTML = svg;
+
+  const fp = fCp(xVal), fpp = fCpp(xVal);
+  let verdict, cls;
+  if(Math.abs(fp) < 0.03){
+    if(fpp>0.03){ verdict='Minimum (f″ > 0)'; cls='verdict-good'; }
+    else if(fpp<-0.03){ verdict='Maximum (f″ < 0)'; cls='verdict-bad'; }
+    else { verdict='Saddle point (f″ ≈ 0)'; cls='verdict-good'; }
+  } else {
+    verdict = fp>0 ? 'Rising — not a critical point' : 'Falling — not a critical point';
+    cls='';
+  }
+  cpResult.innerHTML = `f'(x) = ${fp.toFixed(2)} &nbsp;·&nbsp; f''(x) = ${fpp.toFixed(2)} &nbsp;→&nbsp; <span class="${cls}">${verdict}</span>`;
+}
+cpSlider.addEventListener('input', drawCp);
+drawCp();
+</script>
+</body>
+</html>
